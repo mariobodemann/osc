@@ -17,6 +17,9 @@ import android.net.*;
 import okhttp3.*;
 import java.io.*;
 import android.preference.*;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
+
 
 public class MainActivity extends Activity {
 
@@ -49,9 +52,11 @@ public class MainActivity extends Activity {
 
   private RecyclerView recyclerView;
   private TextView infoText;
+  private ScrollView infoTextScrollView;
   private BluetoothScanningAdapter recyclerViewAdapter;
   private BluetoothAdapter bluetoothAdapter;
   private Handler handler = new Handler();
+  private CameraService service;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class MainActivity extends Activity {
 
     setupViews();
     setupBluetooth();
+    setupRetrofit();
   }
 
   @Override
@@ -97,6 +103,7 @@ public class MainActivity extends Activity {
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     infoText = (TextView)findViewById(R.id.information);
+    infoTextScrollView = (ScrollView)findViewById(R.id.information_scroll);
 
     findViewById(R.id.connect_bluetooth).setOnClickListener(new OnClickListener(){
         @Override
@@ -112,12 +119,29 @@ public class MainActivity extends Activity {
         }
       });
 
-    findViewById(R.id.connect_camera).setOnClickListener(new OnClickListener(){
+    findViewById(R.id.camera_status).setOnClickListener(new OnClickListener(){
         @Override
         public void onClick(View view) {
-          connectCamera();
+          cameraStatus();
         }
-      });
+      }
+    );
+
+    findViewById(R.id.camera_info).setOnClickListener(new OnClickListener(){
+        @Override
+        public void onClick(View view) {
+          cameraInfo();
+        }
+      }
+    );
+
+    findViewById(R.id.camera_command).setOnClickListener(new OnClickListener(){
+        @Override
+        public void onClick(View view) {
+          cameraCommand();
+        }
+      }
+    );
   }
 
   private void setupBluetooth() {
@@ -148,6 +172,15 @@ public class MainActivity extends Activity {
     bluetoothAdapter.startLeScan(scanCallback);
   }
 
+  private void setupRetrofit() {
+    Retrofit retrofit = new Retrofit.Builder()
+      .baseUrl("http://192.168.43.1:6624")
+      .addConverterFactory(MoshiConverterFactory.create())
+      .build();
+
+    service = retrofit.create(CameraService.class);
+  }
+
   private void connectWifi() {
     info("Connecting to WiFi");
 
@@ -168,9 +201,9 @@ public class MainActivity extends Activity {
          && result.SSID.endsWith(".OSC")
          ) {
         info("Found WiFi candidate: " + result.capabilities); 
-        
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        
+
         String networkSSID = result.SSID;
         String networkPass = prefs.getString("wifipass", "");
 
@@ -185,41 +218,125 @@ public class MainActivity extends Activity {
           manager.enableNetwork(networkId, true);
           manager.saveConfiguration();
         }
-        
+
         info("WiFi: Connected!");
       }
     }
   }
 
-  private void connectCamera() {
-    final OkHttpClient client = new OkHttpClient();
+  private void cameraStatus() {
+    info("Printing camera status");
 
-    final Request request = new Request.Builder()
-      .url("http://192.168.43.1:6624/osc/state")
-      .build();
-
-    client.newCall(request).enqueue(new Callback() {
-        @Override public void onFailure(Call call, IOException e) {
-          StringWriter sw = new StringWriter();
-          PrintWriter pw = new PrintWriter(sw);
-          e.printStackTrace(pw);
-          info(sw.toString());
-        }
-
-        @Override public void onResponse(Call call, Response response) throws IOException {
+    service.state().enqueue(
+      new retrofit2.Callback<CameraService.State>(){
+        @Override 
+        public void onResponse(
+          retrofit2.Call<CameraService.State> call, 
+          retrofit2.Response<CameraService.State> response) {
           if(!response.isSuccessful()) {
             info("Camera: Unexpected response code " + response);
+          } else {
+            info("Camera Response: " + response.body());
           }
+        }
 
-          Headers responseHeaders = response.headers();
-          for(int i = 0, size = responseHeaders.size(); i < size; i++) {
-            info("Camera Header: " + responseHeaders.name(i) + ": " + responseHeaders.value(i));
-          }
-
-          info("Camera Response: " + response.body().string());
+        @Override 
+        public void onFailure(
+          retrofit2.Call<CameraService.State> call, 
+          Throwable t) {
+          info("Could not print status", t);
         }
       }
-      );
+    );
+  }
+
+  private void cameraInfo() {
+    info("Printing camera info");
+
+    service.info().enqueue(
+      new retrofit2.Callback<CameraService.Info>(){
+        @Override 
+        public void onResponse(
+          retrofit2.Call<CameraService.Info> call, 
+          retrofit2.Response<CameraService.Info> response) {
+          if(!response.isSuccessful()) {
+            info("Camera: Unexpected response code " + response);
+          } else {
+            info("Camera Response: " + response.body());
+          }
+        }
+
+        @Override 
+        public void onFailure(
+          retrofit2.Call<CameraService.Info> call, 
+          Throwable t) {
+          info("Could not print status", t);
+        }
+      }
+    );
+  }
+
+  private void cameraCommand() {
+    info("Preparing command usage");
+
+    final Map<String, CameraService.Command> commands = new HashMap<String, CameraService.Command>();   
+    CameraService.ListFileCommand.Parameter listParameter = new CameraService.ListFileCommand.Parameter();
+    commands.put("list all files", new CameraService.ListFileCommand(listParameter));
+    
+    final CharSequence[] names = getCommandNames(commands);
+
+    new AlertDialog.Builder(this)
+      .setTitle("Execute Commands")
+      .setItems(
+      names,
+      new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int id) {
+          CameraService.Command c = commands.get(names[id]);
+          executeCommand(c);
+        }
+      }
+    )
+      .show();
+  }
+ 
+  private void executeCommand(CameraService.Command c) {
+    service.commandExecute((CameraService.ListFileCommand)c).enqueue(
+      new retrofit2.Callback<CameraService.CommandResponse>() {
+        @Override 
+        public void onResponse(
+          retrofit2.Call<CameraService.CommandResponse> call, 
+          retrofit2.Response<CameraService.CommandResponse> response) {
+          if(!response.isSuccessful()) {
+            info("Camera: Unexpected response code " + response);
+          } else {
+            info("Camera Response: " + response.body());
+          }
+        }
+
+        @Override 
+        public void onFailure(
+          retrofit2.Call<CameraService.CommandResponse> call, 
+          Throwable t) {
+          info("Could not print status", t);
+        }
+      }
+    );
+  }
+
+  private CharSequence[] getCommandNames(Map<String, CameraService.Command> commands) {
+    final CharSequence[] names = new CharSequence[commands.size()];
+    int i = 0;
+    for(final String key : commands.keySet()) {
+      names[i++] = key;
+    }
+    return names;
+  }
+
+  private void info(CharSequence message, Throwable t) {
+    final StringWriter sw = new StringWriter();
+    final PrintWriter pw = new PrintWriter(sw);
+    t.printStackTrace(pw);
+    info(message + System.lineSeparator() + System.lineSeparator() + sw.toString());
   }
 
   private void info(final CharSequence message) {
@@ -229,6 +346,13 @@ public class MainActivity extends Activity {
           final String previous = infoText.getText().toString();
           final String next = message + "\n";
           infoText.setText(previous + next);
+          handler.post(new Runnable() {
+              @Override
+              public void run() {
+                infoTextScrollView.scrollTo(0, infoTextScrollView.getHeight());
+              }
+            }
+          );
         }
       }
     );

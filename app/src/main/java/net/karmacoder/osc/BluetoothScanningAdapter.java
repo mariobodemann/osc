@@ -47,7 +47,8 @@ public class BluetoothScanningAdapter extends RecyclerView.Adapter<BluetoothScan
 
   public void addDevice(BluetoothDevice device) {
     for(final BluetoothDevice currentDevice : list) {
-      if(currentDevice.getName().equals(device.getName())) {
+      final String current = currentDevice.getAddress();
+      if(current.equals(device.getAddress())) {
         return;
       }
     }
@@ -64,16 +65,20 @@ public class BluetoothScanningAdapter extends RecyclerView.Adapter<BluetoothScan
   @Override
   public BluetoothDeviceViewHolder onCreateViewHolder(final ViewGroup group, final int position) {
     final View view = inflater.inflate(R.layout.bluetooth_item, group, false);
+    final BluetoothDeviceViewHolder viewHolder = new BluetoothDeviceViewHolder(view);
     view.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View view) {
           if(listener != null) {
-            listener.onDeviceClicked(list.get(position));
+            listener.onDeviceClicked(
+              list.get(viewHolder.getPosition())
+            );
           } 
         }
       }
     );
-    return new BluetoothDeviceViewHolder(view);
+
+    return viewHolder;
   }
 
   @Override
