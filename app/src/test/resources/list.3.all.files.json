@@ -1,0 +1,52 @@
+{
+    "name": "camera.listFiles",
+    "results": {
+        "continuationToken": "all_3_881",
+        "entries": [
+            {
+                "_is360": true,
+                "_orientation": 0,
+                "_recordTime": 0,
+                "dateTimeZone": "2017:07:20 23:09:28+02:00",
+                "fileUrl": "/media/e/DCIM/Camera/20170720_230928.jpg",
+                "height": 2830,
+                "isProcessed": true,
+                "lat": 0,
+                "lng": 0,
+                "name": "20170720_230928.jpg",
+                "size": "4550080",
+                "width": 5660
+            },
+            {
+                "_is360": true,
+                "_orientation": 0,
+                "_recordTime": 0,
+                "dateTimeZone": "2017:07:20 23:09:15+02:00",
+                "fileUrl": "/media/e/DCIM/Camera/20170720_230915.jpg",
+                "height": 2830,
+                "isProcessed": true,
+                "lat": 0,
+                "lng": 0,
+                "name": "20170720_230915.jpg",
+                "size": "4522407",
+                "width": 5660
+            },
+            {
+                "_is360": true,
+                "_orientation": 0,
+                "_recordTime": 0,
+                "dateTimeZone": "2017:07:20 22:49:20+02:00",
+                "fileUrl": "/media/e/DCIM/Camera/20170720_224920.jpg",
+                "height": 2830,
+                "isProcessed": true,
+                "lat": 0,
+                "lng": 0,
+                "name": "20170720_224920.jpg",
+                "size": "4381091",
+                "width": 5660
+            }
+        ],
+        "totalEntries": 881
+    },
+    "state": "done"
+}

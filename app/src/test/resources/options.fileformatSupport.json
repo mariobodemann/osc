@@ -1,0 +1,25 @@
+{
+    "name": "camera.getOptions",
+    "results": {
+        "options": {
+            "fileFormatSupport": [
+                {
+                    "height": 2830,
+                    "type": "jpeg",
+                    "width": 5660
+                },
+                {
+                    "height": 1944,
+                    "type": "jpeg",
+                    "width": 3888
+                },
+                {
+                    "height": 1536,
+                    "type": "jpeg",
+                    "width": 3072
+                }
+            ]
+        }
+    },
+    "state": "done"
+}

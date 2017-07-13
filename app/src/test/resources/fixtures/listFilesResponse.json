@@ -1,0 +1,9 @@
+{
+  "name": "camera.listFiles",
+  "parameters": {
+    "fileType": "all",
+    "totalEntries": 50,
+    "maxThumbSize": 200,
+    "continuationToken": "image_11_20"
+  }
+}

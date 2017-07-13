@@ -1,36 +1,21 @@
 package net.karmacoder.osc;
 
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import java.util.*;
-import android.view.*;
-import android.widget.*;
-import android.content.*;
-import android.view.View.*;
-import android.bluetooth.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BluetoothScanningAdapter extends RecyclerView.Adapter<BluetoothScanningAdapter.BluetoothDeviceViewHolder> {
-  public static class BluetoothDeviceViewHolder extends RecyclerView.ViewHolder {
-    public TextView textView;
-
-    public BluetoothDeviceViewHolder(View view) {
-      super(view);
-      this.textView = (TextView) view.findViewById(R.id.text);
-    }    
-
-    public void update(BluetoothDevice device) {
-      textView.setText(device.getName() + "@" + device.getAddress() + device.getBondState());
-    } 
-  }
-
-  public interface Listener {
-    public void onDeviceClicked(BluetoothDevice model);
-  }  
-
   private final LayoutInflater inflater;
   private final Listener listener;
-
   private List<BluetoothDevice> list;
-
   public BluetoothScanningAdapter(Context context, Listener listener) {
     super();
 
@@ -46,9 +31,9 @@ public class BluetoothScanningAdapter extends RecyclerView.Adapter<BluetoothScan
   }
 
   public void addDevice(BluetoothDevice device) {
-    for(final BluetoothDevice currentDevice : list) {
+    for (final BluetoothDevice currentDevice : list) {
       final String current = currentDevice.getAddress();
-      if(current.equals(device.getAddress())) {
+      if (current.equals(device.getAddress())) {
         return;
       }
     }
@@ -67,15 +52,15 @@ public class BluetoothScanningAdapter extends RecyclerView.Adapter<BluetoothScan
     final View view = inflater.inflate(R.layout.bluetooth_item, group, false);
     final BluetoothDeviceViewHolder viewHolder = new BluetoothDeviceViewHolder(view);
     view.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          if(listener != null) {
-            listener.onDeviceClicked(
-              list.get(viewHolder.getPosition())
-            );
-          } 
-        }
-      }
+                              @Override
+                              public void onClick(View view) {
+                                if (listener != null) {
+                                  listener.onDeviceClicked(
+                                      list.get(viewHolder.getPosition())
+                                  );
+                                }
+                              }
+                            }
     );
 
     return viewHolder;
@@ -84,5 +69,22 @@ public class BluetoothScanningAdapter extends RecyclerView.Adapter<BluetoothScan
   @Override
   public void onBindViewHolder(BluetoothDeviceViewHolder holder, int position) {
     holder.update(list.get(position));
+  }
+
+  public interface Listener {
+    public void onDeviceClicked(BluetoothDevice model);
+  }
+
+  public static class BluetoothDeviceViewHolder extends RecyclerView.ViewHolder {
+    public TextView textView;
+
+    public BluetoothDeviceViewHolder(View view) {
+      super(view);
+      this.textView = (TextView) view.findViewById(R.id.text);
+    }
+
+    public void update(BluetoothDevice device) {
+      textView.setText(device.getName() + "@" + device.getAddress() + device.getBondState());
+    }
   }
 }

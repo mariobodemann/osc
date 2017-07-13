@@ -1,0 +1,15 @@
+{
+    "fingerprint": "0410X1030181",
+    "state": {
+        "_batteryState": "disconnect(Unplugged)",
+        "_cameraId": "full-rear-camera",
+        "_captureState": "idle",
+        "_captureStatus": "idle",
+        "_chargeState": "disconnect(Unplugged)",
+        "_fileChanged": "X",
+        "_passwordChangedState": false,
+        "_sdCardState": true,
+        "batteryLevel": 0.41,
+        "storageChanged": false
+    }
+}

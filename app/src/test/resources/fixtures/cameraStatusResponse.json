@@ -1,0 +1,7 @@
+{
+  "name": "camera.takePicture",
+  "state": "done",
+  "results": {
+    "fileUri": "ABC.JPG"
+  }
+}

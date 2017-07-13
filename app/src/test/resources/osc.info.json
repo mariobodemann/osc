@@ -1,0 +1,25 @@
+{
+    "api": [
+        "/osc/checkForUpdates",
+        "/osc/commands/execute",
+        "/osc/commands/status",
+        "/osc/info",
+        "/osc/state"
+    ],
+    "apiLevel": [
+        1,
+        2
+    ],
+    "endpoints": {
+        "httpPort": 6624,
+        "httpUpdatesPort": 6624
+    },
+    "firmwareVersion": "R10510l",
+    "gps": false,
+    "gyro": true,
+    "manufacturer": "LGE",
+    "model": "LG-R105",
+    "serialNumber": "079832",
+    "supportUrl": "developer.lge.com/friends",
+    "uptime": 15
+}

@@ -1,0 +1,18 @@
+{
+  "fingerprint": "FINGERPRINT",
+  "state": {
+    "batteryLevel": 0.95,
+    "_chargeState": "charging(USB)",
+    "_fileChanged": "X",
+    "_sdCardState": true,
+    "storageChanged": true,
+    "_captureState": "idle",
+    "_cameraId": "full-rear-camera",
+    "_networkType": "LTE",
+    "_signalLevel": 4,
+    "_wifiLevel": 0,
+    "_connectionType": "softAP",
+    "_smsCount": 0,
+    "_thermalWarningNoti": false
+  }
+}

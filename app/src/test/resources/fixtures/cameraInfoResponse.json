@@ -1,0 +1,24 @@
+{
+  "manufacturer": "LGE",
+  "model": "LG-R105",
+  "serialNumber": "LGR105cf99f269",
+  "firmwareVersion": "R105160302",
+  "supportUrl": "developer.lge.com/friends",
+  "endpoints": {
+    "httpPort": 6624,
+    "httpUpdatesPort": 6624
+  },
+  "gps": true,
+  "gyro": true,
+  "uptime": 48,
+  "apiLevel": [
+    "v2"
+  ],
+  "api": [
+    "/osc/checkForUpdates",
+    "/osc/commands/execute",
+    "/osc/commands/status",
+    "/osc/info",
+    "/osc/state"
+  ]
+}

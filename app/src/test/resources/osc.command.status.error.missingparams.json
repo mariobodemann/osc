@@ -1,0 +1,8 @@
+{
+    "error": {
+        "code": "missingParameters",
+        "message": "missingParameters"
+    },
+    "name": "/osc/commands/status",
+    "state": "error"
+}
